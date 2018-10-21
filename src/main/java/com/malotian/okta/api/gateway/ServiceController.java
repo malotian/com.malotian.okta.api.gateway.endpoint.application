@@ -3,6 +3,8 @@ package com.malotian.okta.api.gateway;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -41,6 +43,9 @@ interface BarAdminClient {
 
 @RestController
 public class ServiceController {
+
+	Logger logger = LoggerFactory.getLogger(ServiceController.class);
+
 	private final FooUserClient fooUserClient;
 	private final FooAdminClient fooAdminClient;
 	private final BarUserClient barUserClient;
@@ -54,7 +59,7 @@ public class ServiceController {
 	}
 
 	public Map<String, String> fallback() {
-		System.out.println("fallback");
+		logger.warn("using fallback");
 		return new HashMap<>();
 	}
 
@@ -62,6 +67,7 @@ public class ServiceController {
 	@HystrixCommand(fallbackMethod = "fallback")
 	@CrossOrigin(origins = "*")
 	public Map<String, String> fooUserService() {
+		logger.info("calling {}", fooUserClient);
 		return fooUserClient.userService();
 	}
 
@@ -69,6 +75,7 @@ public class ServiceController {
 	@HystrixCommand(fallbackMethod = "fallback")
 	@CrossOrigin(origins = "*")
 	public Map<String, String> fooAdminService() {
+		logger.info("calling {}", fooAdminClient);
 		return fooAdminClient.adminService();
 	}
 
@@ -76,6 +83,7 @@ public class ServiceController {
 	@HystrixCommand(fallbackMethod = "fallback")
 	@CrossOrigin(origins = "*")
 	public Map<String, String> barUserService() {
+		logger.info("calling {}", barUserClient);
 		return barUserClient.userService();
 	}
 
@@ -83,6 +91,7 @@ public class ServiceController {
 	@HystrixCommand(fallbackMethod = "fallback")
 	@CrossOrigin(origins = "*")
 	public Map<String, String> barAdminService() {
+		logger.info("calling {}", barAdminClient);
 		return barAdminClient.adminService();
 	}
 
