@@ -31,7 +31,7 @@ import feign.RequestInterceptor;
 public class Application {
 
 	Logger logger = LoggerFactory.getLogger(Application.class);
-	
+
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
@@ -41,7 +41,8 @@ public class Application {
 		return new ResourceServerConfigurerAdapter() {
 			@Override
 			public void configure(HttpSecurity http) throws Exception {
-				http.authorizeRequests().antMatchers("/", "/favicon.ico", "/css/**", "/js/**", "/images/**", "/index.html", "/widget.html", "/app-name", "/sign-in-widget-config").permitAll().anyRequest().authenticated();
+				http.authorizeRequests().antMatchers("/", "/favicon.ico", "/css/**", "/js/**", "/images/**", "/index.html", "/widget.html", "/app-name", "/sign-in-widget-config")
+						.permitAll().anyRequest().authenticated();
 			}
 		};
 	}
