@@ -1,0 +1,40 @@
+okta:
+ oauth2:
+   # Client ID from above step
+   clientId: 0oadve4kd8K5o0r3x0h7
+   issuer: https://dev-904187.oktapreview.com/oauth2/default
+server:
+  port: '8080'
+spring:
+  application:
+    name: edge-service
+#zuul:
+#  routes:
+#    foo-admin-service:
+#      path: /admin-service
+#      url: http://localhost:8081
+#    foo-user-service:
+#      path: /user-service
+#      url: http://localhost:8081
+#    bar-admin-service:
+#      path: /admin-service
+#      url: http://localhost:8082
+#    bar-user-service:
+#      path: /user-service
+#      url: http://localhost:8082
+  sensitive-headers: Cookie,Set-Cookie
+security:
+  oauth2:
+    client:
+      client-id: 0oagq0hf2gNoQlFks0h7
+      client-secret: B4zeMfT82VOh9rYCfq9lD-xtBgxQuhQBehcATjVy
+      access-token-uri: https://dev-904187.oktapreview.com/oauth2/default/v1/token
+      user-authorization-uri: https://dev-904187.oktapreview.com/oauth2/default/v1/authorize
+      scope: openid profile email
+    resource:
+      user-info-uri: https://dev-904187.oktapreview.com/oauth2/default/v1/userinfo
+feign:
+  hystrix:
+    enabled: 'true'
+hystrix:
+  shareSecurityContext: 'true'

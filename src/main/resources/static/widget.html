@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>Okta Implicit Spring-Boot</title>
+  <base href="/">
+  <script src="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/2.3.0/js/okta-sign-in.min.js" type="text/javascript"></script>
+  <link href="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/2.3.0/css/okta-sign-in.min.css" type="text/css" rel="stylesheet">
+  <link href="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/2.3.0/css/okta-theme.css" type="text/css" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+  <!-- Render the login widget here -->
+  <div id="okta-login-container"></div>
+  <!-- Render the REST response here -->
+  <div id="user-service"></div>
+  <div id="admin-service"></div>
+  <!-- And a logout button, hidden by default -->
+  <button id="logout" type="button" class="btn btn-danger">Logout</button>
+  <script>
+    $.ajax({
+      url: "/sign-in-widget-config",
+    }).then(function (data) {
+      data.authParams.responseType = ['id_token', 'token'];
+      data.authParams.scopes = ['openid', 'email', 'profile'];
+      data.redirectUri = window.location.href; // simple single page app
+      data.logo = '/images/logo.png';
+      // setup the widget
+      window.oktaSignIn = new OktaSignIn(data);
+      // handle the rest of the page
+      doInit();
+    });
+    /**
+     * Makes a request to a REST resource and displays a simple message to the page.
+     * @param accessToken The access token used for the auth header
+     */
+    function doAllTheThings(accessToken) {
+      // include the Bearer token in the request
+      $.ajax({
+          url: "/user-service",
+          headers: {
+            'Authorization': "Bearer " + accessToken
+          },
+        }).then(function (data) {
+            console.log(data);
+          // Render the message of the day
+          $('#user-service').append(data);
+          // include the Bearer token in the request
+          $.ajax({
+              url: "/admin-service",
+              headers: {
+                'Authorization': "Bearer " + accessToken
+              },
+            }).then(function (data) {
+              console.log(data);
+              // Render the message of the day
+              $('#admin-service').append(data);
+            })
+            .fail(function (data) {
+              $('#admin-service').append("unauthorized as admin");
+              console.error("ERROR!!");
+              console.log(data.responseJSON.error);
+              console.log(data.responseJSON.error_description);
+            });
+
+        })
+        .fail(function (data) {
+          $('#user-service').append("unauthorized as user");
+          console.error("ERROR!!");
+          console.log(data.responseJSON.error);
+          console.log(data.responseJSON.error_description);
+        });
+
+      // show the logout button
+      $("#logout")[0].style.display = 'block';
+    }
+
+    function doInit() {
+      $("#logout").click(function () {
+        oktaSignIn.signOut(() => {
+          oktaSignIn.tokenManager.clear();
+          location.reload();
+        });
+      });
+      // Check if we already have an access token
+      const token = oktaSignIn.tokenManager.get('my_access_token');
+      // if we do great, just go with it!
+      if (token) {
+        doAllTheThings(token.accessToken)
+      } else {
+        // otherwise show the login widget
+        oktaSignIn.renderEl({
+            el: '#okta-login-container'
+          },
+          function (response) {
+            // check if success
+            if (response.status === 'SUCCESS') {
+              // for our example we have the id token and the access token
+              oktaSignIn.tokenManager.add('my_id_token', response[0]);
+              oktaSignIn.tokenManager.add('my_access_token', response[1]);
+              // hide the widget
+              oktaSignIn.hide();
+              // now for the fun part!
+              doAllTheThings(response[1].accessToken);
+            }
+          },
+          function (err) {
+            // handle any errors
+            console.log(err);
+          }
+        );
+      }
+    }
+  </script>
+</body>
+
+</html>

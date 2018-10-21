@@ -21,3 +21,40 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# Maven artifacts
+target/**
+
+# Generated OSGI Bundle manifest
+MANIFEST.MF
+
+# Diff artifacts
+*.orig
+
+# Java binaries
+*.class
+
+# Package files
+*.jar
+*.war
+*.ear
+
+# Eclipse project files
+.settings/
+.metadata/
+.springBeans/
+
+# Generated eclipse files
+feature.xml
+feature.properties
+
+# Netbeans project files
+nbactions.xml
+nb-configuration.xml
+
+# IDEA project files
+.idea/
+*.iml
+*.ipr
+*.iws
+.springBeans
