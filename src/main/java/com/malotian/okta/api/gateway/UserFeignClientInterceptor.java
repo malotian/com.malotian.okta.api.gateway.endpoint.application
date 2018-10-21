@@ -26,7 +26,7 @@ public class UserFeignClientInterceptor implements RequestInterceptor {
 		if (authentication != null && authentication.getDetails() instanceof OAuth2AuthenticationDetails) {
 			OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
 			template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE, details.getTokenValue()));
-			logger.info("for request: {}, added AUTHORIZATION_HEADER, {} {} for {}", template.url(), BEARER_TOKEN_TYPE, details.getTokenValue());
+			logger.info("for request: {}, added AUTHORIZATION_HEADER, {} {}", template.url(), BEARER_TOKEN_TYPE, details.getTokenValue());
 		}
 	}
 }
