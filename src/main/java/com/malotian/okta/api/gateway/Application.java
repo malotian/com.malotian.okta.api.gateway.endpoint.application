@@ -37,7 +37,7 @@ public class Application {
 		return new ResourceServerConfigurerAdapter() {
 			@Override
 			public void configure(HttpSecurity http) throws Exception {
-				http.authorizeRequests().antMatchers("/", "/css/**", "/js/**", "/index.html", "/widget.html", "/app-name", "/sign-in-widget-config").permitAll().anyRequest().authenticated();
+				http.authorizeRequests().antMatchers("/", "/css/**", "/js/**", "/images/**", "/index.html", "/widget.html", "/app-name", "/sign-in-widget-config").permitAll().anyRequest().authenticated();
 			}
 		};
 	}

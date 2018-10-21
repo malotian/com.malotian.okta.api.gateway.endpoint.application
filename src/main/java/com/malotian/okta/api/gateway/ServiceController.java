@@ -85,13 +85,9 @@ public class ServiceController {
 	public Map<String, String> barAdminService() {
 		return barAdminClient.adminService();
 	}
-	// @GetMapping(path = "/bar-user-service", produces =
-	// MediaType.APPLICATION_JSON_VALUE)
-	// @HystrixCommand(fallbackMethod = "fallback")
-	// @CrossOrigin(origins = "*")
-	// public Map<String, String> barUserService(Principal principal,
-	// HttpServletRequest request) {
-	// return barUserClient.userService(principal, request);
-	// }
 
+	@GetMapping(path = "/app-name")
+	public String appname() {
+		return "gateway";
+	}
 }

@@ -188,17 +188,27 @@ define(["jquery", "okta-auth-sdk", "okta-config"], function ($, OktaAuth, OktaCo
       client.tokenManager.refresh(ACCESS_TOKEN_KEY);
     });
 
-    $('#btn-api-request-user').click(function () {
+    $('#btn-api-request-foo-user').click(function () {
       resetDisplay();
-      serviceCall('/user-service');
+      serviceCall('/foo-user-service');
     });
 
-    $('#btn-api-request-admin').click(function () {
+    $('#btn-api-request-foo-admin').click(function () {
       resetDisplay();
-      serviceCall('/admin-service');
+      serviceCall('/foo-admin-service');
     });
 
-    $('#btn-sign-out').click(function () {
+    $('#btn-api-request-bar-user').click(function () {
+      resetDisplay();
+      serviceCall('/bar-user-service');
+    });
+
+    $('#btn-api-request-bar-admin').click(function () {
+      resetDisplay();
+      serviceCall('/bar-admin-service');
+    });
+
+      $('#btn-sign-out').click(function () {
       resetDisplay();
       client.tokenManager.clear();
       client.session.close();
