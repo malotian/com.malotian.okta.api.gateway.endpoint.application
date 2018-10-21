@@ -39,8 +39,7 @@ define(["jquery", "okta-auth-sdk", "okta-config"], function ($, OktaAuth, OktaCo
           OktaConfig.authzIssuer : OktaConfig.orgUrl
       })
       .then(function (res) {
-        console.log('tokens: %O', res);
-        displayClaims(res);
+        console.log('tokens: %O', res);        displayClaims(res);
         client.tokenManager.add(ID_TOKEN_KEY, res[0]);
         client.tokenManager.add(ACCESS_TOKEN_KEY, res[1]);
       })
