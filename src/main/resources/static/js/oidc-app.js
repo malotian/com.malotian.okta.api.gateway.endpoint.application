@@ -39,7 +39,8 @@ define(["jquery", "okta-auth-sdk", "okta-config"], function ($, OktaAuth, OktaCo
           OktaConfig.authzIssuer : OktaConfig.orgUrl
       })
       .then(function (res) {
-        console.log('tokens: %O', res);        displayClaims(res);
+        console.log('tokens: %O', res);
+        displayClaims(res);
         client.tokenManager.add(ID_TOKEN_KEY, res[0]);
         client.tokenManager.add(ACCESS_TOKEN_KEY, res[1]);
       })
@@ -103,6 +104,7 @@ define(["jquery", "okta-auth-sdk", "okta-config"], function ($, OktaAuth, OktaCo
   };
 
   var displayClaims = function (claims) {
+	resetDisplay();
     $('#claims').append('<pre><code class="json">' +
       JSON.stringify(claims, null, '  ') + '</code></pre>');
     $('pre code').each(function (i, block) {
@@ -171,7 +173,6 @@ define(["jquery", "okta-auth-sdk", "okta-config"], function ($, OktaAuth, OktaCo
         })
         .then(function (res) {
           console.log('tokens: %O', res);
-          displayClaims(res);
           client.tokenManager.add(ID_TOKEN_KEY, res[0]);
           client.tokenManager.add(ACCESS_TOKEN_KEY, res[1]);
         })
@@ -182,8 +183,8 @@ define(["jquery", "okta-auth-sdk", "okta-config"], function ($, OktaAuth, OktaCo
     });
 
     $('#btn-refresh').click(function () {
-      client.tokenManager.refresh(ID_TOKEN_KEY);
       resetDisplay();
+      client.tokenManager.refresh(ID_TOKEN_KEY);
       client.tokenManager.refresh(ACCESS_TOKEN_KEY);
     });
 
@@ -207,7 +208,7 @@ define(["jquery", "okta-auth-sdk", "okta-config"], function ($, OktaAuth, OktaCo
       serviceCall('/bar-admin-service');
     });
 
-      $('#btn-sign-out').click(function () {
+    $('#btn-sign-out').click(function () {
       resetDisplay();
       client.tokenManager.clear();
       client.session.close();
