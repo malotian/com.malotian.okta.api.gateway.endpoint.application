@@ -28,6 +28,9 @@ public class UserFeignClientInterceptor implements RequestInterceptor {
 	@Value("${okta.oauth2.issuer}")
 	private String issuer;
 
+	@Value("${okta.oauth2.clientId}")
+	private String clientId;
+
 	Logger logger = LoggerFactory.getLogger(UserFeignClientInterceptor.class);
 
 	@Override
@@ -40,9 +43,8 @@ public class UserFeignClientInterceptor implements RequestInterceptor {
 
 			RestTemplate restTemplate = new RestTemplate();
 			MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
-			form.add("client_id", "0oadve4kd8K5o0r3x0h7");
+			form.add("client_id", clientId);
 			form.add("token", details.getTokenValue());
-			form.add("token_type_hint", "access_token");
 
 			String response = restTemplate.postForObject(issuer + "/v1/introspect", form, String.class);
 			try {
