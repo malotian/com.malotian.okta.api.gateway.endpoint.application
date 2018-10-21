@@ -40,30 +40,37 @@ public class UserFeignClientInterceptor implements RequestInterceptor {
 
 		if (authentication != null && authentication.getDetails() instanceof OAuth2AuthenticationDetails) {
 			OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
+			String token = details.getTokenValue();
 
-			RestTemplate restTemplate = new RestTemplate();
-			MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
-			form.add("client_id", clientId);
-			form.add("token", details.getTokenValue());
-
-			String response = restTemplate.postForObject(issuer + "/v1/introspect", form, String.class);
-			try {
-				ObjectMapper mapper = new ObjectMapper();
-				JsonFactory factory = mapper.getFactory();
-				JsonParser parser = factory.createParser(response);
-				JsonNode tokenIntrospectResult = mapper.readTree(parser);
-				logger.info("tokenIntrospectResult: {}", tokenIntrospectResult);
-				if (!tokenIntrospectResult.get("active").asBoolean()) {
-					logger.error("quitting, token is not active anymore");
-					return;
-				}
-			} catch (Exception e) {
-				logger.error("quitting, token introspection failed.", e);
+			if (!isValid(token))
 				return;
-			}
 
 			template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE, details.getTokenValue()));
 			logger.info("for request: {}, added AUTHORIZATION_HEADER, {} {}", template.url(), BEARER_TOKEN_TYPE, details.getTokenValue());
 		}
+	}
+
+	private boolean isValid(String token) {
+		RestTemplate restTemplate = new RestTemplate();
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("client_id", clientId);
+		form.add("token", token);
+
+		String response = restTemplate.postForObject(issuer + "/v1/introspect", form, String.class);
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			JsonFactory factory = mapper.getFactory();
+			JsonParser parser = factory.createParser(response);
+			JsonNode tokenIntrospectResult = mapper.readTree(parser);
+			logger.info("tokenIntrospectResult: {}", tokenIntrospectResult);
+			if (!tokenIntrospectResult.get("active").asBoolean()) {
+				logger.error("quitting, token is not active anymore");
+				return false;
+			}
+		} catch (Exception e) {
+			logger.error("quitting, token introspection failed.", e);
+			return false;
+		}
+		return true;
 	}
 }
